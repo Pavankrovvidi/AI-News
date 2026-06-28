@@ -43,8 +43,9 @@ class NewsApiClient(private val store: ApiKeyStore) {
             if (key.isBlank()) {
                 throw AiException("No News API key set. Open Settings and add a free GNews key to get real, sourced news.")
             }
-            val url = if (query.isNotBlank()) {
-                val q = URLEncoder.encode(query, "UTF-8")
+            val cleaned = query.replace(Regex("[^\\p{L}\\p{N} ]"), " ").trim().replace(Regex("\\s+"), " ")
+            val url = if (cleaned.isNotBlank()) {
+                val q = URLEncoder.encode(cleaned, "UTF-8")
                 "https://gnews.io/api/v4/search?q=$q&lang=en&max=10&apikey=$key"
             } else {
                 "https://gnews.io/api/v4/top-headlines?category=$category&lang=en&max=10&apikey=$key"
